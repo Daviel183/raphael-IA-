@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Raphael IA (beta) - Portal Completo</title>
+  <style>
+    body {font-family: Arial, sans-serif; background:#1c1c1c; color:#f5f5f5; margin:0;}
+    header {background:#e63946; padding:20px; text-align:center;}
+    section {max-width:650px; margin:30px auto; background:#2a2a2a; padding:20px; border-radius:10px;}
+    h2 {color:#ffcc00;}
+    label {display:block; margin:15px 0;}
+    input, select {padding:10px; width:90%; margin-top:5px;}
+    button {padding:10px 15px; background:#e63946; color:#fff; border:none; border-radius:5px; cursor:pointer;}
+    button:hover {background:#b71c1c;}
+    .result {margin-top:20px; font-weight:bold; background:#333; padding:10px; border-radius:5px; white-space:pre-line;}
+    .combo {margin-top:20px; background:#222; padding:15px; border-radius:8px;}
+    .combo h3 {color:#00ffcc;}
+    footer {background:#111; text-align:center; padding:15px; margin-top:30px; font-size:0.9em; color:#aaa;}
+    #registroADM, #panelADM {display:none;}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Raphael IA (beta)</h1>
+    <p>Generador de sensibilidad + combos potenciados</p>
+  </header>
+
+  <section>
+    <h2>Desbloquear Sensibilidad</h2>
+    <p>Ingresa la llave secreta:</p>
+    <input type="text" id="inputLlave" placeholder="Introduce la llave aquí">
+
+    <h3>Datos del jugador</h3>
+    <label>Marca del celular: <input type="text" id="marca" placeholder="Ej: Redmi Note 10 Lite"></label>
+    <label>DPI: <input type="number" id="dpi" placeholder="Ej: 400"></label>
+    <label>Arma favorita:
+      <select id="arma">
+        <option>MP40</option>
+        <option>M1887</option>
+        <option>M1014</option>
+        <option>SPAS12</option>
+        <option>MAG7</option>
+        <option>AWM</option>
+        <option>KAR98K</option>
+        <option>SCAR</option>
+        <option>AK</option>
+        <option>M4A1</option>
+        <option>FAMAS</option>
+        <option>Groza</option>
+        <option>UMP</option>
+        <option>P90</option>
+        <option>Vector</option>
+        <option>Thompson</option>
+        <option>Desert Eagle</option>
+      </select>
+    </label>
+    <label>Estilo de juego:
+      <select id="estilo">
+        <option value="rush">Rush</option>
+        <option value="precision">Precisión</option>
+        <option value="mixto">Mixto</option>
+      </select>
+    </label>
+
+    <button onclick="desbloquearSensi()">Desbloquear Sensi</button>
+    <div class="result" id="resultado">Esperando desbloqueo...</div>
+    <div class="combo" id="combo"></div>
+  </section>
+
+  <div style="text-align:center; margin-top:20px;">
+    <h3>Creador: Daviel 👑</h3>
+    <button onclick="mostrarRegistro()">Registro</button>
+  </div>
+
+  <div id="registroADM" style="margin-top:20px; background:#222; padding:15px; border-radius:8px;">
+    <h3>Acceso Exclusivo ADM</h3>
+    <p>Introduce tu usuario y contraseña:</p>
+    <input type="text" id="usuarioADM" placeholder="Usuario">
+    <input type="password" id="claveADM" placeholder="Contraseña">
+    <button onclick="validarADM()">Entrar</button>
+    <div id="mensajeADM" style="margin-top:10px; font-weight:bold;"></div>
+  </div>
+
+  <div id="panelADM" style="margin-top:20px; background:#333; padding:20px; border-radius:10px;">
+    <h3>Panel ADM</h3>
+    <p>Bienvenido Administrador Daviel 👑</p>
+    <ul>
+      <li>⚡ Configuración de combos</li>
+      <li>⚡ Estadísticas de jugadores</li>
+      <li>⚡ Ajustes de sensibilidad</li>
+      <li>⚡ Control de acceso</li>
+    </ul>
+    <button onclick="cerrarADM()">Cerrar sesión</button>
+  </div>
+
+  <footer>
+    <p>Raphael IA (beta) | Creado por Daviel</p>
+  </footer>
+
+  <script>
+    const llaveSecreta = "freestyle"; // invisible
+
+    function rango100a200(valor) {
+      return 100 + (Math.abs(valor) % 101);
+    }
+
+    function desbloquearSensi() {
+      let entrada = document.getElementById("inputLlave").value;
+      if(entrada === llaveSecreta) {
+        let marca = document.getElementById("marca").value;
+        let dpi = parseInt(document.getElementById("dpi").value);
+        let arma = document.getElementById("arma").value;
+        let estilo = document.getElementById("estilo").value;
+
+        let hash = 0;
+        for(let i=0; i<llaveSecreta.length; i++) {
+          hash += llaveSecreta.charCodeAt(i);
+        }
+
+        let general = rango100a200(hash + dpi);
+        let roja = rango100a200(hash * 2 + dpi);
+        let dosx = rango100a200(hash * 3 + dpi);
+        let cuatrox = rango100a200(hash * 4 + dpi);
+        let awm = rango100a200(hash * 5 + dpi);
+
+        document.getElementById("resultado").textContent =
+          `✅ Sensi generada por Raphael\n` +
+          `Celular: ${marca}\nDPI: ${dpi}\nEstilo: ${estilo}\nArma favorita: ${arma}\n\n` +
+          `General: ${general}\nMira Roja: ${roja}\nMira 2x: ${dosx}\nMira 4x: ${cuatrox}\nAWM: ${awm}`;
+
+        let comboTexto = generarCombo(arma, estilo);
+        document.getElementById("combo").innerHTML = comboTexto;
+
+      } else {
+        document.getElementById("resultado").textContent = "❌ Llave incorrecta.";
+      }
+    }
+
+    function generarCombo(arma, estilo) {
+      let personajes = [];
+      let mascota = "";
+      let aditamento = "";
+
+      if(estilo === "rush" && arma === "MP40") {
+        personajes = ["Kelly", "Alok", "Jota", "Hayato"];
+        mascota = "Falco";
+        aditamento = "Mercado táctico";
+      } else if(estilo === "precision" && arma === "AWM") {
+        personajes = ["Moco", "Laura", "Hayato", "Kenta"];
+        mascota = "Panda";
+        aditamento = "Martillo de mejora";
+      } else if(estilo === "mixto" && arma === "M1887") {
+        personajes = ["Chrono", "Jota", "Hayato", "Alok"];
+        mascota = "Mr. Waggor";
+        aditamento = "Soporte de equipo";
+      } else {
+        personajes = ["Kelly", "Moco", "Alok", "Hayato"];
+        mascota = "Ottero";
+        aditamento = "Superbolsillos";
+      }
+
+      return `<h3>Combo sugerido por Raphael</h3>
+              <p><strong>Personajes:</strong> ${personajes.join(", ")}</p>
+              <p><strong>Mascota:</strong> ${mascota}</p>
+              <p><strong>Aditamento:</strong> ${aditamento}</p>`;
+    }
+
+    function mostrarRegistro() {
+      document.getElementById("registroADM").style.display = "block";
+    }
+
+    function validarADM() {
+      let usuario = document.getElementById("usuarioADM").value;
+      let clave = document.getElementById("claveADM").value;
+
+      if(usuario === "daviel.vip" && clave === "raphael.copilot") {
+        document.getElementById("mensajeADM").textContent = "✅ Bienvenido Administrador Daviel 👑";
+        document.getElementById("panelADM").style.display = "block";
+      } else {
+        document.getElementById("mensajeADM").textContent = "❌ Usuario o contraseña incorrectos.";
+      }
+    }
+
+    function cerrarADM() {
+      document.getElementById("panelADM").style.display = "none";
+      document.getElementById("mensajeADM").textContent = "🔒 Sesión cerrada.";
+      document.getElementById("usuarioADM").value = "";
+      document.getElementById("claveADM").value = "";
+    }
+  </script>
+</body>
+</html>
